@@ -128,9 +128,27 @@ public class EmotionAnalysis {
 	    		}
 	    	};
 	    	JavaPairRDD<String, score> timeScoreClassPairRDD = timeScorePairRDD.combineByKey(createScore, addAndCount, combine).sortByKey();
-	    	for(Tuple2<String, score> list: timeScoreClassPairRDD.collect()){
-	    		System.out.println(list._1 + "      " + list._2.positive + "     " + list._2.negative);
-	    	}
+// 	    	for(Tuple2<String, score> list: timeScoreClassPairRDD.collect()){
+// 	    		System.out.println(list._1 + "      " + list._2.positive + "     " + list._2.negative);
+// 	    	}
+		 //把结果写入文件
+	    		try{
+	    			File file = new File("/home/yingying/SparkStatisticData/emotionAnalysis.txt");
+	    			if(! file.exists()){
+	    				file.createNewFile();
+	    			}
+	    			FileWriter fw = new FileWriter(file, true);
+	    			BufferedWriter bw = new BufferedWriter(fw);
+	    			for(Tuple2<String, score> list: timeScoreClassPairRDD.collect()){
+	    				bw.write(list._1 + "      " + list._2.positive + "     " + list._2.negative);
+	    				bw.write("\n");
+	    			}
+	    			bw.close();
+	    			System.out.println("file has been wiote !");
+	    		}catch(IOException w){
+	    			w.printStackTrace();
+	    		}   
+		    
 	    }
 	    
 	    
